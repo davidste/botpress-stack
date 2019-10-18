@@ -1,0 +1,54 @@
+version: '1.0'
+services:
+  - name: db
+    type: postgres
+    version: 11.4
+    configuration: StandAlone
+    ports:
+      - 5432
+    username: botpress
+    database: botpress
+    userPassword: null
+    remoteAccess: false
+    deployTo:
+      - botpress
+
+  - name: botpress
+    type: docker
+    image: botpress/server
+    version: v12_1_6
+    ports:
+      - 3000
+    remoteAccess: false
+    env:
+      NODE_ENV: production
+      PG_HOST: "{{=service('db').getMasterAlias()}}"
+      PG_USER: "{{=service('db').get('username')}}"
+      PG_PASSWORD: "{{=service('db').get('userPassword')}}"
+      PG_PORT: 5432
+      MB_ENCRYPTION_SECRET_KEY: "{{=randomString(32)}}"
+      PG_SSL: "false"
+      BP_HOST: 0.0.0.0
+      EXTERNAL_URL: "http://{{=service('botpress').getBalancerDomain()}}"
+    volumes:
+      - directory: /botpress/data
+    deployTo:
+      - botpress
+
+  - name: web
+    type: nginx
+    version: 1.17
+    ports:
+      - 80
+      - 443
+    remoteAccess: true
+    serviceFiles:
+      - name: botpress
+    deployTo:
+      - botpress
+
+hosts:
+  - name: botpress
+    requirements:
+      cores: 1
+      memory: 2
