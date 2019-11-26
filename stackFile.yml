@@ -16,7 +16,7 @@ services:
   - name: botpress
     type: docker
     image: botpress/server
-    version: v12_1_6
+    version: v12_2_3
     ports:
       - 3000
     remoteAccess: false
