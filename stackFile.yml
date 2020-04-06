@@ -24,7 +24,7 @@ services:
       MB_ENCRYPTION_SECRET_KEY: "{{=randomString(32)}}"
       PG_SSL: "false"
       BP_HOST: 0.0.0.0
-      EXTERNAL_URL: "http://{{=service('bp-web').getBalancerDomain()}}"
+      EXTERNAL_URL: "http://{{=service('bp-web').getNginxDomain()}}"
       DATABASE_URL: "postgres://botpress:Letmein123@bp-db-master:5432/botpress"
       BPFS_STORAGE: "database"
       BP_PRODUCTION: true
@@ -43,7 +43,7 @@ services:
     serviceFiles:
       - name: botpress
         https: letsencrypt
-        domains: [bp.ogrid.io]
+        domains: [ogriod.io, bp.ogrid.io]
     deployTo:
       - botpress
 
