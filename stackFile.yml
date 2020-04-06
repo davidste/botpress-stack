@@ -13,7 +13,7 @@ services:
     deployTo:
       - botpress
 
-  - name: bp
+  - name: botpress
     type: docker
     image: botpress/server
     version: v12_8_1
