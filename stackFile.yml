@@ -1,6 +1,6 @@
 version: '1.0'
 services:
-  - name: db
+  - name: bp-db
     type: postgres
     version: 11.4
     configuration: StandAlone
@@ -8,34 +8,32 @@ services:
       - 5432
     username: botpress
     database: botpress
-    userPassword: null
+    userPassword: Letmein123
     remoteAccess: false
     deployTo:
       - botpress
 
-  - name: botpress
+  - name: bp
     type: docker
     image: botpress/server
-    version: v12_2_3
+    version: v12_8_1
     ports:
       - 3000
     remoteAccess: false
     env:
-      NODE_ENV: production
-      PG_HOST: "{{=service('db').getMasterAlias()}}"
-      PG_USER: "{{=service('db').get('username')}}"
-      PG_PASSWORD: "{{=service('db').get('userPassword')}}"
-      PG_PORT: 5432
       MB_ENCRYPTION_SECRET_KEY: "{{=randomString(32)}}"
       PG_SSL: "false"
       BP_HOST: 0.0.0.0
-      EXTERNAL_URL: "http://{{=service('botpress').getBalancerDomain()}}"
+      EXTERNAL_URL: "http://{{=service('bp').getBalancerDomain()}}"
+      DATABASE_URL: "postgres://botpress:Letmein123@bp-db-master:5432/botpress"
+      BPFS_STORAGE: "database"
+      BP_PRODUCTION: true
     volumes:
       - directory: /botpress/data
     deployTo:
       - botpress
 
-  - name: web
+  - name: bp-web
     type: nginx
     version: 1.17
     ports:
